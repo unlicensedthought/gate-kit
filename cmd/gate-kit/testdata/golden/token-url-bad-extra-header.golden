@@ -1,0 +1,7 @@
+exit 1
+--- stdout
+--- stderr
+[token-url] ci.sh:1 [http-extraheader-authorization] http.extraHeader puts the Authorization value in argv — equally leaky, explicitly rejected. Use a stdin-fed credential helper.
+
+[token-url] FAIL: 1 occurrence(s) of a shell-routed git credential pattern.
+[token-url] Fix: use a credential helper that reads the secret on stdin, and a clean remote URL.

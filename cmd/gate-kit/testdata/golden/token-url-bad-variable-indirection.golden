@@ -1,0 +1,8 @@
+exit 1
+--- stdout
+--- stderr
+[token-url] push.sh:1 [credential-url-assigned-to-variable] a variable is assigned a URL carrying credential material; the moment it reaches a git remote it is in argv. Use a stdin-fed credential helper.
+[token-url] push.sh:2 [git-cmd-with-tainted-variable] git invoked with a variable that was assigned a credential-bearing URL in this file — the shell expands it into argv.
+
+[token-url] FAIL: 2 occurrence(s) of a shell-routed git credential pattern.
+[token-url] Fix: use a credential helper that reads the secret on stdin, and a clean remote URL.

@@ -1,0 +1,9 @@
+exit 2
+--- stdout
+[token-url] OK (--staged): 1 file(s) scanned, no shell-routed git credential patterns.
+--- stderr
+[secrets] OK: no credential literals (--staged, 1 file(s))
+gate-kit: secrets exit 0
+gate-kit leak: COULD NOT RUN: no .gate-kit/leak.json at the index: a leak gate with nothing configured must not report a pass
+gate-kit: leak exit 2
+gate-kit: token-url exit 0

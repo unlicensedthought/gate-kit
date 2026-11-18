@@ -1,0 +1,4 @@
+exit 0
+--- stdout
+[token-url] OK (--staged): 1 file(s) scanned, no shell-routed git credential patterns.
+--- stderr

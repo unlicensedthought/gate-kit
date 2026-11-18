@@ -1,0 +1,6 @@
+exit 1
+--- stdout
+--- stderr
+gate-kit leak: BLOCK <path withheld>: term-in-path #2
+gate-kit leak: BLOCK <path withheld>:1: PII: US phone number
+gate-kit leak: 2 finding(s). Private terms are never printed; #N is the term's position in the repo's list.

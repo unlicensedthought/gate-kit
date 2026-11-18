@@ -1,0 +1,127 @@
+{
+ "_readme": [
+  "Evasions that were reproduced against earlier revisions of the scanner, kept as permanent fixtures.",
+  "shell[] is concatenated to form the fixture text; fake token literals are split across parts.",
+  "scanner_expected is what THIS scanner does today. 'missed' entries are recorded blind spots.",
+  "The selftest fails if a fixture's actual result differs from its record in EITHER direction."
+ ],
+ "fixtures": [
+  {
+   "id": "R1-1-variable-indirection",
+   "round": 1,
+   "desc": "URL assigned to a variable on one line, pushed on the next.",
+   "shell": [
+    "URL=\"https://x-access-token:$(vault get DEPLOY_TOKEN)@github.com/o/r.git\"\n",
+    "git push \"$URL\" HEAD:refs/heads/wt/x"
+   ],
+   "scanner_expected": "caught"
+  },
+  {
+   "id": "R1-2-inline-shell-credential-helper",
+   "round": 1,
+   "desc": "git -c credential.helper='!f(){...};f': a shell snippet that fetches the secret sits in argv.",
+   "shell": [
+    "git -c credential.helper='!f(){ echo username=x-access-token; echo password=$(vault get DEPLOY_TOKEN); };f' push origin HEAD:refs/heads/wt/x"
+   ],
+   "scanner_expected": "caught"
+  },
+  {
+   "id": "R1-3-extraheader-case",
+   "round": 1,
+   "desc": "http.extraheader (lowercased key) carrying an Authorization header.",
+   "shell": [
+    "git -c http.extraheader=\"AUTHORIZATION: Basic eC1hY2Nlc3M=\" push origin HEAD:refs/heads/wt/x"
+   ],
+   "scanner_expected": "caught"
+  },
+  {
+   "id": "R1-4-bare-token-userinfo",
+   "round": 1,
+   "desc": "No username: the token itself is the userinfo.",
+   "shell": [
+    "git push https://",
+    "ghp_",
+    "deadbeefdeadbeefdeadbeefdeadbeefdead",
+    "@github.com/o/r.git HEAD:refs/heads/wt/x"
+   ],
+   "scanner_expected": "caught"
+  },
+  {
+   "id": "R1-5-line-continuation",
+   "round": 1,
+   "desc": "Backslash continuation splits the command across raw lines.",
+   "shell": [
+    "git push \\\n  \"https://x-access-token:$(vault get DEPLOY_TOKEN)@github.com/o/r.git\" \\\n  HEAD:refs/heads/wt/x"
+   ],
+   "scanner_expected": "caught"
+  },
+  {
+   "id": "R2-6-nested-command-substitution",
+   "round": 2,
+   "desc": "Nested $( $( ) ): the substitution pattern excludes parentheses, so it cannot match.",
+   "shell": [
+    "git push \"https://x-access-token:$(vault get $(echo DEPLOY_TOKEN))@github.com/o/r.git\" HEAD:refs/heads/wt/x"
+   ],
+   "scanner_expected": "missed"
+  },
+  {
+   "id": "R2-7-quoted-var-in-userinfo",
+   "round": 2,
+   "desc": "Quotes inside the userinfo; the userinfo class excludes quote characters.",
+   "shell": [
+    "TOK=$(vault get DEPLOY_TOKEN)\n",
+    "git push https://x-access-token:\"$TOK\"@github.com/o/r.git HEAD:refs/heads/wt/x"
+   ],
+   "scanner_expected": "missed"
+  },
+  {
+   "id": "R2-8-quote-split-literal",
+   "round": 2,
+   "desc": "A token literal split by adjacent quoting.",
+   "shell": [
+    "git push https://x-access-token:'",
+    "ghp_",
+    "'\"",
+    "deadbeefdeadbeefdeadbeefdeadbeef",
+    "\"@github.com/o/r.git HEAD:refs/heads/wt/x"
+   ],
+   "scanner_expected": "missed"
+  },
+  {
+   "id": "R3-10-absolute-path-interpreter-helper",
+   "round": 3,
+   "desc": "credential.helper set to an absolute path with arguments. No leading '!', but git runs it through the shell all the same.",
+   "shell": [
+    "git -c credential.helper='/bin/sh -c \"echo password=$(vault get DEPLOY_TOKEN)\"' push origin HEAD:refs/heads/wt/x"
+   ],
+   "scanner_expected": "caught"
+  },
+  {
+   "id": "R3-11-env-interpreter-helper",
+   "round": 3,
+   "desc": "Same class via an interpreter on PATH: credential.helper='/usr/bin/env sh -c ...'.",
+   "shell": [
+    "git -c credential.helper='/usr/bin/env sh -c \"echo password=$(vault get DEPLOY_TOKEN)\"' push origin HEAD:refs/heads/wt/x"
+   ],
+   "scanner_expected": "caught"
+  },
+  {
+   "id": "R3-12-extraheader-leading-space",
+   "round": 3,
+   "desc": "http.extraHeader=' Authorization: ...': one leading space defeated a prefix match.",
+   "shell": [
+    "git -c http.extraHeader=' Authorization: Basic eC1hY2Nlc3M=' push origin HEAD:refs/heads/wt/x"
+   ],
+   "scanner_expected": "caught"
+  },
+  {
+   "id": "R3-13-extraheader-tab-and-case",
+   "round": 3,
+   "desc": "Header value produced by a command substitution, so the word 'authorization' never appears in the source. Known miss: unfixable in a text scanner.",
+   "shell": [
+    "git -c http.extraHeader=\"$(printf '\\tAuThOrIzAtIoN: Basic eC1hY2Nlc3M=')\" push origin HEAD:refs/heads/wt/x"
+   ],
+   "scanner_expected": "missed"
+  }
+ ]
+}

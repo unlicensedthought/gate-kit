@@ -1,0 +1,4 @@
+exit 2
+--- stdout
+--- stderr
+gate-kit leak: COULD NOT RUN: .gate-kit/leak.json enables no word list and no detector: nothing to look for

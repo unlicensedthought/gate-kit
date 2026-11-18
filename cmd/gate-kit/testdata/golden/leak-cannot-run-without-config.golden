@@ -1,0 +1,4 @@
+exit 2
+--- stdout
+--- stderr
+gate-kit leak: COULD NOT RUN: no .gate-kit/leak.json at the index: a leak gate with nothing configured must not report a pass

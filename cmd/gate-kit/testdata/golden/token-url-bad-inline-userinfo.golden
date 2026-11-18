@@ -1,0 +1,7 @@
+exit 1
+--- stdout
+--- stderr
+[token-url] push.sh:1 [git-cmd-with-inline-credential] git invoked with credential material in the remote URL — the secret lands in argv (ps/pgrep-readable).
+
+[token-url] FAIL: 1 occurrence(s) of a shell-routed git credential pattern.
+[token-url] Fix: use a credential helper that reads the secret on stdin, and a clean remote URL.

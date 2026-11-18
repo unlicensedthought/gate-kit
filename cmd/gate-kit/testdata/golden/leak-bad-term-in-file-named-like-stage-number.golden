@@ -1,0 +1,5 @@
+exit 1
+--- stdout
+--- stderr
+gate-kit leak: BLOCK 1:a.txt:1: private-term #1
+gate-kit leak: 1 finding(s). Private terms are never printed; #N is the term's position in the repo's list.

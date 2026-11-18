@@ -1,0 +1,7 @@
+exit 1
+--- stdout
+--- stderr
+[token-url] setup.sh:1 [git-inline-shell-credential-helper] an inline shell credential helper (credential.helper=!<shell>) — the snippet, and the secret-fetch inside it, sit in argv. Use the path-valued helper that reads the secret on stdin.
+
+[token-url] FAIL: 1 occurrence(s) of a shell-routed git credential pattern.
+[token-url] Fix: use a credential helper that reads the secret on stdin, and a clean remote URL.
