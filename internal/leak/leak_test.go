@@ -171,8 +171,14 @@ func TestUnreadablePathErrorWithholdsTheTerm(t *testing.T) {
 		t.Fatal(err)
 	}
 	run("add", "-A")
-	if err := os.Remove(filepath.Join(dir, "zorblax.txt")); err != nil {
+	// Unreadable, not deleted: a file deleted from the working tree is left out.
+	unreadable := filepath.Join(dir, "zorblax.txt")
+	if err := os.Chmod(unreadable, 0); err != nil {
 		t.Fatal(err)
+	}
+	t.Cleanup(func() { os.Chmod(unreadable, 0o644) })
+	if _, err := os.ReadFile(unreadable); err == nil {
+		t.Skip("file mode 0 is still readable here (running as root?)")
 	}
 	t.Chdir(dir)
 	var out, errb bytes.Buffer

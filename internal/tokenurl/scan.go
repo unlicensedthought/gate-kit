@@ -252,7 +252,7 @@ var rulesDoc = map[string]string{
 		"it reaches a git remote it is in argv. Use a stdin-fed credential helper.",
 	ruleTainted: "git invoked with a variable that was assigned a credential-bearing " +
 		"URL in this file — the shell expands it into argv.",
-	ruleShellHelp: "an inline shell credential helper (credential.helper=!<shell>) — the " + // token-url:allow
+	ruleShellHelp: "an inline shell credential helper (credential.helper=!<shell>) — the " + // token-url:allow token-in-url-gate:allow
 		"snippet, and the secret-fetch inside it, sit in argv. Use the " +
 		"path-valued helper that reads the secret on stdin.",
 	ruleExtraHdr: "http.extraHeader puts the Authorization value in argv — equally leaky, " +

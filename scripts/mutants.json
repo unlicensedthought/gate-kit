@@ -31,5 +31,6 @@
  {"id":"scansrc-terms-file-symlink-followed-outside-repo","file":"internal/scansrc/scansrc.go","old":"full, err := filepath.EvalSymlinks(filepath.Join(top, p))","new":"full, err := filepath.Join(top, p), error(nil)"},
  {"id":"scansrc-terms-file-symlink-blob-accepted","file":"internal/scansrc/scansrc.go","old":"if mode != \"100644\" && mode != \"100755\" {","new":"if false {"},
  {"id":"scansrc-terms-file-size-cap-removed","file":"internal/scansrc/scansrc.go","old":"if int64(len(b)) > max {","new":"if false {"},
- {"id":"secrets-skips-non-utf8-text","file":"internal/secrets/scan.go","old":"\tif isBinaryProbe(raw) {\n\t\treturn out\n\t}","new":"\tif isBinaryProbe(raw) || !utf8.Valid(raw) {\n\t\treturn out\n\t}"}
+ {"id":"secrets-skips-non-utf8-text","file":"internal/secrets/scan.go","old":"\tif isBinaryProbe(raw) {\n\t\treturn out\n\t}","new":"\tif isBinaryProbe(raw) || !utf8.Valid(raw) {\n\t\treturn out\n\t}"},
+ {"id":"scansrc-tree-lists-worktree-deletions","file":"internal/scansrc/scansrc.go","old":"\t\t\tif !gone[p] {\n\t\t\t\tpaths = append(paths, p)\n\t\t\t}","new":"\t\t\tpaths = append(paths, p)"}
 ]

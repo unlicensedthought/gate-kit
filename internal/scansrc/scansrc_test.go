@@ -95,3 +95,30 @@ func TestReadOfUnreadableListedPathIsAnError(t *testing.T) {
 		t.Error("an unreadable worktree path read as absent without an error")
 	}
 }
+
+// A tracked file deleted from the working tree but not staged is left out of a
+// working-tree scan, so every path the snapshot lists is still readable.
+func TestWorktreeTreeLeavesOutUnstagedDeletions(t *testing.T) {
+	dir, run := gitRepo(t)
+	for _, name := range []string{"kept.txt", "gone.txt"} {
+		if err := os.WriteFile(filepath.Join(dir, name), []byte(name+"\n"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	run("add", ".")
+	if err := os.Remove(filepath.Join(dir, "gone.txt")); err != nil {
+		t.Fatal(err)
+	}
+	s, err := Git{Dir: dir}.Tree("")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(s.Paths) != 1 || s.Paths[0] != "kept.txt" {
+		t.Fatalf("worktree paths = %q, want only kept.txt", s.Paths)
+	}
+	for _, p := range s.Paths {
+		if _, err := s.Read(p); err != nil {
+			t.Errorf("listed path %s did not read: %v", p, err)
+		}
+	}
+}

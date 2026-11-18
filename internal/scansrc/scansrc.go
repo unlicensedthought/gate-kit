@@ -262,8 +262,24 @@ func (g Git) Tree(rev string) (Snapshot, error) {
 		if err != nil {
 			return Snapshot{}, err
 		}
+		// A tracked file deleted from the working tree but not yet staged is not
+		// there to scan; it is left out rather than failing the run as unreadable.
+		del, err := g.Run("ls-files", "-z", "--deleted")
+		if err != nil {
+			return Snapshot{}, err
+		}
+		gone := map[string]bool{}
+		for _, d := range SplitNUL(del) {
+			gone[d] = true
+		}
+		var paths []string
+		for _, p := range SplitNUL(out) {
+			if !gone[p] {
+				paths = append(paths, p)
+			}
+		}
 		g.Dir = top
-		return Snapshot{G: g, Rev: Worktree, Paths: SplitNUL(out)}, nil
+		return Snapshot{G: g, Rev: Worktree, Paths: paths}, nil
 	}
 	out, err := g.Run("ls-tree", "-r", "-z", "--name-only", rev)
 	if err != nil {

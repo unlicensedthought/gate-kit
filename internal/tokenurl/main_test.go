@@ -36,8 +36,8 @@ func TestRules(t *testing.T) {
 		{"git push \"$URL\"\nURL=\"https://u:${T}@h/o/r\"", 1, ruleTainted},
 		{"git config credential.helper \"!echo x\"", 1, ruleShellHelp},
 		{"git -c http.extraHeader=\"Authorization: x\" push", 1, ruleExtraHdr},
-		{"export U=\"https://u:$T@h/o\"", 1, ruleAssigned},
-		{"declare -x -r U=\"https://u:$T@h/o\"", 1, ruleAssigned},
+		{"export U=\"https://u:$T@h/o\"", 1, ruleAssigned},                     // token-in-url-gate:allow
+		{"declare -x -r U=\"https://u:$T@h/o\"", 1, ruleAssigned},              // token-in-url-gate:allow
 		{"git -c http.extraHeader=\"AUTHORİZATION: x\" push", 1, ruleExtraHdr}, // re.I folds İ to i
 		{"git push \\\n  \"https://u:$(vault get T)@h/o\"", 1, ruleInline},
 	}

@@ -22,28 +22,28 @@ var knownBad = []string{
 	"git push https://x-access-token:$(vault get DEPLOY_TOKEN)@github.com/o/r.git",               // token-url:allow
 	"git clone https://${GITHUB_TOKEN}@github.com/o/r.git",                                       // token-url:allow
 	`git remote set-url origin "https://x-access-token:ghp_deadbeefdeadbeef@github.com/o/r.git"`, // token-url:allow gate:allow-line: test fixture
-	`git -c http.extraHeader="Authorization: Basic eHl6" push origin main`,                       // token-url:allow
+	`git -c http.extraHeader="Authorization: Basic eHl6" push origin main`,                       // token-url:allow token-in-url-gate:allow
 	"git fetch https://user:`vault get TOK`@github.com/o/r",                                      // token-url:allow
 	// BYPASS 1 — variable indirection across lines
 	"URL=\"https://x-access-token:$(vault get DEPLOY_TOKEN)@github.com/o/r.git\"\ngit push \"$URL\" HEAD:refs/heads/wt/x", // token-url:allow
 	// BYPASS 1b — the push is written BEFORE the assignment (order-independence)
 	"git push \"$PUSH_URL\" HEAD:main\nPUSH_URL=\"https://x-access-token:${TOK}@github.com/o/r.git\"", // token-url:allow
 	// BYPASS 2 — inline shell credential helper
-	`git -c credential.helper='!f(){ echo password=$(vault get DEPLOY_TOKEN); };f' push origin HEAD`, // token-url:allow
-	`git config credential.helper "!echo password=$TOKEN"`,                                           // token-url:allow
-	`git -c CREDENTIAL.HELPER="!f(){ :; };f" fetch`,                                                  // token-url:allow
+	`git -c credential.helper='!f(){ echo password=$(vault get DEPLOY_TOKEN); };f' push origin HEAD`, // token-url:allow token-in-url-gate:allow
+	`git config credential.helper "!echo password=$TOKEN"`,                                           // token-url:allow token-in-url-gate:allow
+	`git -c CREDENTIAL.HELPER="!f(){ :; };f" fetch`,                                                  // token-url:allow token-in-url-gate:allow
 	// ROUND-3 BYPASS — an ABSOLUTE-PATH / interpreter helper value, no '!' at all
-	`git -c credential.helper='/bin/sh -c "echo password=$(vault get DEPLOY_TOKEN)"' push origin HEAD`, // token-url:allow
-	`git -c credential.helper="/usr/bin/env sh -c 'echo password=$TOK'" push origin HEAD`,              // token-url:allow
-	`git config credential.helper "/usr/bin/python3 /tmp/vend.py"`,                                     // token-url:allow
+	`git -c credential.helper='/bin/sh -c "echo password=$(vault get DEPLOY_TOKEN)"' push origin HEAD`, // token-url:allow token-in-url-gate:allow
+	`git -c credential.helper="/usr/bin/env sh -c 'echo password=$TOK'" push origin HEAD`,              // token-url:allow token-in-url-gate:allow
+	`git config credential.helper "/usr/bin/python3 /tmp/vend.py"`,                                     // token-url:allow token-in-url-gate:allow
 	// an absolute-path helper with arguments that is not a named interpreter
-	`git config credential.helper "/opt/tools/helper.sh --store"`, // token-url:allow
+	`git config credential.helper "/opt/tools/helper.sh --store"`, // token-url:allow token-in-url-gate:allow
 	// ROUND-3 BYPASS — leading whitespace before the Authorization field name
-	`git -c http.extraHeader=' Authorization: Basic eHl6' push origin main`, // token-url:allow
+	`git -c http.extraHeader=' Authorization: Basic eHl6' push origin main`, // token-url:allow token-in-url-gate:allow
 	// BYPASS 3 — case
-	`git -c http.extraheader="AUTHORIZATION: Basic eHl6" push origin main`,     // token-url:allow
-	`git -c HTTP.EXTRAHEADER="authorization: bearer x" push`,                   // token-url:allow
-	`git -c http.https://github.com.extraheader="Authorization: Basic x" push`, // token-url:allow
+	`git -c http.extraheader="AUTHORIZATION: Basic eHl6" push origin main`,     // token-url:allow token-in-url-gate:allow
+	`git -c HTTP.EXTRAHEADER="authorization: bearer x" push`,                   // token-url:allow token-in-url-gate:allow
+	`git -c http.https://github.com.extraheader="Authorization: Basic x" push`, // token-url:allow token-in-url-gate:allow
 	// BYPASS 4 — bare-token userinfo, no x-access-token username. Assembled at
 	// run time so no whole token-shaped literal sits in this file.
 	"git clone https://" + "ghp_" + "deadbeefdeadbeefdeadbeefdeadbeefdead" + "@github.com/o/r.git", // token-url:allow

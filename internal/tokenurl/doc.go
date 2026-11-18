@@ -23,7 +23,7 @@ package tokenurl
 //	D  a shell-executed credential.helper value: !snippet, an absolute path
 //	   with arguments, or a value naming an interpreter. A bare path with no
 //	   arguments, the sanctioned wiring, is not flagged.
-//	E  http.extraHeader = Authorization..., any case, leading whitespace allowed.
+//	E  http.extraHeader = Authorization..., any case, leading whitespace allowed. token-in-url-gate:allow
 //
 // NOT DETECTED, and recorded as such in testdata/evasions.json (the selftest
 // fails if a recorded miss starts being caught or a recorded catch is lost):

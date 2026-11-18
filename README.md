@@ -13,7 +13,7 @@ A gate that has never been seen to fail is a guess. This repo keeps four kinds o
 - **Selftests.** `gate-kit <gate> --selftest` feeds each gate known-bad and known-good input and exits non-zero if either verdict is wrong.
 - **Golden files.** `cmd/gate-kit/testdata/golden/` holds the exit code and output of 40 end-to-end cases. Each one builds a throwaway git repository, stages the input and runs the real entry point.
 - **A recorded evasion corpus.** `internal/tokenurl/testdata/evasions.json` lists evasions that beat an earlier version of the token-URL scanner. The selftest fails if a recorded catch is lost *or* a recorded miss starts being caught, so the list of known blind spots cannot drift.
-- **Mutants.** `scripts/mutants.json` lists 33 small breakages of the gate code. `scripts/mutants.sh` applies each to a scratch copy and requires the test suite to fail.
+- **Mutants.** `scripts/mutants.json` lists 34 small breakages of the gate code. `scripts/mutants.sh` applies each to a scratch copy and requires the test suite to fail.
 
 ## Quick start
 
@@ -52,7 +52,7 @@ Escape hatches, deliberately narrow: a line containing `gate:allow-line` is exem
 
 ## How it works
 
-`internal/scansrc` is the one place that decides what to read (index blobs are addressed as `:0:<path>`, so a staged file named like `1:a.txt` is not reparsed by git as a stage number; a listed path that cannot be read is exit 2, never "missing"): the index, every unpushed commit of a pre-push (not just the tip, because a secret added and then removed inside one push is still in the history being pushed), or a revision's tree. Gates supply only a per-file verdict.
+`internal/scansrc` is the one place that decides what to read (index blobs are addressed as `:0:<path>`, so a staged file named like `1:a.txt` is not reparsed by git as a stage number; a listed path that cannot be read is exit 2, never "missing"; a tracked file deleted from the working tree but not staged is left out of a `--tree` scan): the index, every unpushed commit of a pre-push (not just the tip, because a secret added and then removed inside one push is still in the history being pushed), or a revision's tree. Gates supply only a per-file verdict.
 
 - **secrets**: seven strict regex rules with no exemptions (a token-shaped literal is refused even on a line that mentions `sha256`), plus two line rules (`Bearer` literal, `sk-` key) that skip checksum lines and placeholder or shell-expansion values. Go's RE2 has no lookbehind, so boundaries are checked by hand on the neighbouring bytes.
 - **leak**: word list plus three PII shapes. An email passes if its domain is a reserved documentation domain, `users.noreply.github.com`, or its local part is `noreply`; `git@host:path` remotes are not emails. The phone check is the regex plus three guards (see below).
